@@ -19,39 +19,39 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module buffer_ram_dp#( 
-	parameter AW = 17, 				// Cantidad de bits  de la dirección 
-	parameter DW = 16, 				// Cantidad de Bits por pixel 
-	parameter   imageFILE= "ramdp/image.men")	// Archivo para precargar
+	parameter AW = 17, 				
+	parameter DW = 16, 				
+	parameter   imageFILE= "ramdp/image.men")	
 	(  
-	input  clk, 			// Reloj
-	input  [AW-1: 0] addr_in,	// Direccion de entrada 
-	input  [DW-1: 0] data_in,	// Dato de entrada
-	input  regwrite, 		// Registro de control de escritura
+	input  clk, 			
+	input  [AW-1: 0] addr_in,	 
+	input  [DW-1: 0] data_in,	
+	input  regwrite, 		
 	
-	output reg [DW-1: 0] data_out,	// Dato de salida
-	input [AW-1: 0] addr_out, 	// Direccion de salida
-	input regread			// Registro de control de lectura
+	output reg [DW-1: 0] data_out,	
+	input [AW-1: 0] addr_out, 	
+	input regread			
 	);
 
-//-- Calcular el numero de posiciones totales de memoria 
-localparam NPOS = 2 ** AW; //-- Memoria / Cantidad de pixeles
 
-	reg [DW-1: 0] ram [0: NPOS-1]; 	// RAM. Se llena de arriba a abajo, izq a derecha. 
+localparam NPOS = 2 ** AW;
+
+	reg [DW-1: 0] ram [0: NPOS-1]; 
 
 //-- Lectura/escritura  de la memoria port 1 
-always @(posedge clk) begin 		// Flancos de subida en el reloj
-       if (regwrite == 1) 		// Si regwrite es 1, entonces
-             ram[addr_in] <= data_in;	// escribe el dato de entrada en la direccion dada
+always @(posedge clk) begin 		
+       if (regwrite == 1) 		
+             ram[addr_in] <= data_in;	
 end
 
 //-- Lectura/escritura  de la memoria port 2 
-always @(posedge clk) begin 		// Flancos de subida en el reloj
-       if (regread == 1) 		// Si regread es 1, entonces
-           data_out <= ram[addr_out]; 	// lee el dato en la direcion dada y lo asigna a data_out
+always @(posedge clk) begin 		
+       if (regread == 1) 		
+           data_out <= ram[addr_out]; 	
 end
  
 initial begin
-	$readmemh(imageFILE, ram);	// Inicializa la RAM con los valores del archivo imageFILE
+	$readmemh(imageFILE, ram);
 end
 
 endmodule
